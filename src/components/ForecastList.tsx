@@ -1,43 +1,38 @@
+import { ForecastDay } from "@/types/weather"
 import React from "react"
-import { View, Text, StyleSheet, FlatList } from "react-native"
-import Icons  from "react-native-vector-icons/Ionicons"
+import { View, Text, StyleSheet, FlatList, Image } from "react-native"
 
-type Forecast = {
-  date: string
-  maxTemp: number
-  minTemp: number
-  rainChance: number
+type Props = {
+  forecast: ForecastDay[]
 }
 
-const forecastData: Forecast[] = [
-  { date: "10/2", maxTemp: 29, minTemp: 15, rainChance: 30 },
-  { date: "10/3", maxTemp: 29, minTemp: 15, rainChance: 30 },
-  { date: "10/4", maxTemp: 29, minTemp: 15, rainChance: 30 },
-  { date: "10/5", maxTemp: 29, minTemp: 15, rainChance: 30 },
-  { date: "10/6", maxTemp: 29, minTemp: 15, rainChance: 30 }
-]
+export default function ForecastList({ forecast }: Props) {
+  if (!forecast || forecast.length === 0) return null
 
-export default function ForecastList() {
   return (
     <View style={styles.container}>
       <FlatList
-        data={forecastData}
+        data={forecast}
         keyExtractor={(item) => item.date}
-        renderItem={({ item }) => (
-          <View style={styles.row}>
-            <Text style={styles.date}>{item.date}</Text>
-            < Icons
-              name="weather-rainy"
-              size={28}
-              color="#333"
-              style={styles.icon}
-            />
-            <Text style={styles.maxTemp}>{item.maxTemp}°C</Text>
-            <Text style={styles.minTemp}>{item.minTemp}°C</Text>
-            <Text style={styles.rain}>{item.rainChance}%</Text>
-          </View>
-        )}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
+        renderItem={({ item }) => {
+          const iconUrl = `https://openweathermap.org/img/wn/${item.icon}@2x.png`
+          return (
+            <View style={styles.row}>
+              <Text style={styles.date}>{item.date}</Text>
+              {iconUrl ? (
+                <Image
+                  source={{ uri: iconUrl }}
+                  style={{ width: 40, height: 40 }}
+                />
+              ) : (
+                <Text style={styles.fallbackIcon}>☀️</Text>
+              )}
+              <Text style={styles.maxTemp}>{Math.round(item.tempMax)}°C</Text>
+              <Text style={styles.minTemp}>{Math.round(item.tempMax)}°C</Text>
+              <Text style={styles.rain}>{item.rain}%</Text>
+            </View>
+          )
+        }}
       />
     </View>
   )
@@ -45,24 +40,25 @@ export default function ForecastList() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#E6F5FF",
+    backgroundColor: "#ffffffff",
     borderRadius: 20,
-    paddingVertical: 10,
-    marginHorizontal: 16,
-    marginTop: 12
+    paddingVertical: 16,
+    width:"80%",
+    marginBottom:32
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 10
+    paddingHorizontal: 8,
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    marginHorizontal: 16
   },
   date: {
     fontSize: 16,
-    width: 50
   },
-  icon: {
+  fallbackIcon: {
     width: 30
   },
   maxTemp: {
@@ -79,13 +75,8 @@ const styles = StyleSheet.create({
   },
   rain: {
     fontSize: 16,
-    color: "#333",
-    width: 50,
+    color: "#000",
+    width:60,
     textAlign: "right"
-  },
-  separator: {
-    height: 1,
-    backgroundColor: "#ccc",
-    marginHorizontal: 16
   }
 })

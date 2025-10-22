@@ -1,5 +1,4 @@
-import { View, StyleSheet, Text } from "react-native"
-import { JSX } from "react"
+import { View, StyleSheet, Text, Image } from "react-native"
 
 type Props = {
   location: string
@@ -16,15 +15,27 @@ export default function WeatherCard({
   rain,
   icon
 }: Props) {
+  const iconUrl = icon
+    ? `https://openweathermap.org/img/wn/${icon}@2x.png`
+    : null
+  console.log("icon", icon)
+  console.log("iconUrl:", iconUrl)
   return (
     <View style={styles.container}>
       <View style={styles.item}>
-        <Text style={styles.location}>{location}の天気</Text>
+        <Text style={styles.location}>{location}</Text>
       </View>
 
       <View style={styles.temp}>
         <View style={styles.tempIcon}>
-          <Text style={styles.icon}>{icon}</Text>
+          {iconUrl ? (
+            <Image
+              source={{ uri: iconUrl }}
+              style={{ width: 100, height: 100 }}
+            />
+          ) : (
+            <Text style={styles.fallbackIcon}>☀️</Text>
+          )}
         </View>
         <View style={styles.tempRow}>
           <Text style={styles.maxTemp}>{maxTemp}</Text>
@@ -33,28 +44,25 @@ export default function WeatherCard({
       </View>
 
       <View style={styles.line} />
-        <View style={styles.rainRow}>
-          <Text style={styles.label}>降水確率</Text>
-          <Text style={styles.value}>{rain}</Text>
-        </View>
+      <View style={styles.rainRow}>
+        <Text style={styles.label}>降水確率</Text>
+        <Text style={styles.value}>{rain}</Text>
+      </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    alignSelf: "center", //親の中央
     paddingVertical: 24,
-    backgroundColor:"#fff",
-    margin:16,
-    width:"80%",
+    backgroundColor: "#fff",
+    margin: 16,
+    width: "80%",
     alignItems: "center",
-     borderRadius: 20,
-     
+    borderRadius: 20
   },
-  item: {
-
-  },
+  item: {},
   location: {
     fontSize: 30
   },
@@ -63,15 +71,15 @@ const styles = StyleSheet.create({
     gap: 10,
     marginTop: 24
   },
-  tempIcon:{
-    marginHorizontal:16
+  tempIcon: {
+    marginHorizontal: 16
   },
   icon: {
-    fontSize: 70
   },
-  tempRow:{
-    marginTop:16,
-    alignItems:"center"
+  fallbackIcon: {},
+  tempRow: {
+    marginTop: 16,
+    alignItems: "center"
   },
   maxTemp: {
     color: "red",
@@ -84,7 +92,7 @@ const styles = StyleSheet.create({
   line: {
     borderBottomWidth: 1,
     width: 200,
-    marginVertical: 10,
+    marginVertical: 10
   },
   rainRow: {
     flexDirection: "row",
@@ -92,9 +100,9 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   label: {
-    fontSize: 20,
+    fontSize: 20
   },
   value: {
-    fontSize: 20,
+    fontSize: 20
   }
 })

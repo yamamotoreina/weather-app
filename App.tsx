@@ -1,18 +1,12 @@
-import React from "react"
-import { StyleSheet, View } from "react-native"
-import HomeScreen from "./src/app/HomeScreen"
+import React, { useEffect } from "react"
+import { initDatabase } from "./src/db/database"
+import {HomeScreen} from "./src/app/HomeScreen"
+
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <HomeScreen />
-    </View>
-  )
-}
+  useEffect(() => {
+    initDatabase()
+  }, [])
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#CCEFFF"
-  }
-})
+  return <HomeScreen />
+}

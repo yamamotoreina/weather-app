@@ -1,17 +1,28 @@
 //型定義
 //現在の天気情報
 export type CurrentWeather = {
-  city:string
-  temp:number
-  description: string
-  icon:string
-  humidity: number
-  windSpeed:number
-}
-//日ごとの予報（5日分など）
+  city: string;
+  prefecture: string;
+  date: string;
+  temp: number;
+  tempMax: number;
+  tempMin: number;
+  rain: number;
+  description: string;
+  icon: string;
+  humidity: number;
+  windSpeed: number;
+  lat: number;
+  lon: number;
+  updatedAt: string
+};
+
 export type ForecastDay = {
-  date: string
-  temp: number
-  description: string
-  icon: string
-}
+  date: string;
+  tempMax: number;
+  tempMin: number;
+  description: string;
+  icon: string;
+  rain: number;
+
+};

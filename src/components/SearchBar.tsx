@@ -1,39 +1,62 @@
-import { View, StyleSheet, TextInput, TouchableOpacity } from "react-native"
-import React, { JSX, useState } from "react"
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+  Text
+} from "react-native"
+import React, { useEffect, useState } from "react"
 import { Ionicons } from "@expo/vector-icons"
+import { saveToHistory } from "../db/weatherRepository" //履歴取得
+import KeyboardSafeView from "./KeyboardAvoidingView"
+import { CurrentWeather } from "@/types/weather"
 
-type Props = {
-  onSearch: (city:string)=> void //HomeScreen(親コンポーネント)から渡される
+interface SearchBarProps {
+   onSearch: (city: string) => Promise<void> | void // ← 検索結果を返す関数
+  loading?: boolean
 }
 
- export const SearchBar = ({onSearch}:Props)=> {
-  const [query, setQuery] = useState("")
+export default function SearchBar({ onSearch, loading }: SearchBarProps) {
+  const [city, setCity] = useState("")
 
-  const handlePress = () => {
-    if (query.trim()!==""){
-      onSearch(query.trim())//APIは親側
-      setQuery("")
-    }
+  const handleSearch =  async () => {
+    const trimmed = city.trim()
+    if (trimmed === "") return
+    try {
+    setCity("") // 入力リセットしたい場合
+    await onSearch(trimmed) // 検索実行
+  } catch (error) {
+    console.error("検索エラー:", error)
+  }
   }
 
   return (
     <View style={styles.container}>
       <TextInput
-       style={styles.input}
-       value={query}
-       onChangeText={setQuery}
+        style={styles.input}
+        value={city}
+        onChangeText={setCity}
         placeholder="search"
         placeholderTextColor="#D8D8D8"
-        onSubmitEditing={handlePress}
+        onSubmitEditing={handleSearch}
+        autoFocus={false} //自動でフォーカスされキーボードが表示される
       />
-      <TouchableOpacity onPress={handlePress}>
-        <Ionicons name="search" size={20} color="#333" style={styles.icon} />
-      </TouchableOpacity>
+
+      {loading ? ( //ローディング中
+        <ActivityIndicator size="small" color="#007AFF" />
+      ) : (
+        <TouchableOpacity onPress={handleSearch}>
+          <Ionicons name="search" size={24} color="#000" style={styles.icon} />
+        </TouchableOpacity>
+      )}
     </View>
   )
 }
+
 const styles = StyleSheet.create({
-  container:{
+  container: {
     flexDirection: "row",
     alignItems: "center",
     borderBottomWidth: 1,
@@ -41,15 +64,16 @@ const styles = StyleSheet.create({
     marginVertical: 32,
     borderRadius: 20,
     width: "80%",
-    backgroundColor:"#fff"
+    backgroundColor: "#fff"
   },
-  input:{
+  input: {
     flex: 1,
     fontSize: 20,
-    paddingLeft:16,
+    paddingLeft: 16,
     borderBottomEndRadius: "1px"
   },
   icon: {
-    paddingRight:16,
+    paddingRight: 16
   }
 })
+
