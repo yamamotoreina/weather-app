@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { CurrentWeather, ForecastDay } from "../types/weather"
 import { weatherService } from "../services/weatherService"
-import { saveToHistory } from "@/db/weatherRepository"
+import { saveToHistory } from "../db/weatherRepository"
 
 export const useWeatherSearch = () => {
   const [current, setCurrent] = useState<CurrentWeather | null>(null)

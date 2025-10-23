@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "weather-app",
-    "slug": "weather-app",
+    "slug": "MemoApp",
     "scheme": "MemoApp",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -24,7 +24,8 @@
         "backgroundImage": "assets/icon_adaptive_background.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.yamamotoreina.weatherapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -37,6 +38,7 @@
       "eas": {
         "projectId": "88463bb2-fabd-4e41-8eb5-4006c79e8ea6"
       }
-    }
+    },
+    "owner": "reina-yamamopto"
   }
 }

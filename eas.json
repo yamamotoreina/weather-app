@@ -1,0 +1,36 @@
+{
+  "cli": {
+    "version": ">= 3.13.0"
+  },
+  "build": {
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "simulator": true
+      },
+      "env": {
+        "API_KEY":"$API_KEY",
+        "BASE_URL":"$BASE_URL"
+      }
+    },
+    "production": {
+      "distribution": "store",
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "ios": {
+        "simulator": false
+      },
+      "env": {
+        "API_KEY":"$API_KEY",
+        "BASE_URL":"$BASE_URL"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
