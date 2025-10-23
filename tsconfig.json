@@ -1,6 +1,16 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
-  }
+    "strict": true,
+    "noImplicitAny": true,
+    "jsx": "react-native",
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["src/components/*"],
+      "@services/*": ["src/services/*"],
+      "@db/*": ["src/db/*"],
+      "@types/*": ["src/types/*"]
+    }
+  },
+  "include": ["src", "App.tsx"]
 }
