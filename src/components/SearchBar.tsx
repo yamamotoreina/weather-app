@@ -1,35 +1,30 @@
 import {
   ActivityIndicator,
-  FlatList,
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  View,
-  Text
+  View
 } from "react-native"
 import React, { useEffect, useState } from "react"
 import { Ionicons } from "@expo/vector-icons"
-import { saveToHistory } from "../db/weatherRepository" //履歴取得
-import KeyboardSafeView from "./KeyboardAvoidingView"
-import { CurrentWeather } from "@/types/weather"
 
 interface SearchBarProps {
-   onSearch: (city: string) => Promise<void> | void // ← 検索結果を返す関数
+  onSearch: (city: string) => Promise<void> | void // ← 検索結果を返す関数
   loading?: boolean
 }
 
 export default function SearchBar({ onSearch, loading }: SearchBarProps) {
   const [city, setCity] = useState("")
 
-  const handleSearch =  async () => {
+  const handleSearch = async () => {
     const trimmed = city.trim()
     if (trimmed === "") return
     try {
-    setCity("") // 入力リセットしたい場合
-    await onSearch(trimmed) // 検索実行
-  } catch (error) {
-    console.error("検索エラー:", error)
-  }
+      setCity("") // 入力リセットしたい場合
+      await onSearch(trimmed) // 検索実行
+    } catch (error) {
+      console.error("検索エラー:", error)
+    }
   }
 
   return (
@@ -76,4 +71,3 @@ const styles = StyleSheet.create({
     paddingRight: 16
   }
 })
-

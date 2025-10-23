@@ -13,6 +13,7 @@ export default function ForecastList({ forecast }: Props) {
     <View style={styles.container}>
       <FlatList
         data={forecast}
+        scrollEnabled={false}
         keyExtractor={(item) => item.date}
         renderItem={({ item }) => {
           const iconUrl = `https://openweathermap.org/img/wn/${item.icon}@2x.png`
