@@ -67,23 +67,24 @@ useweatherSearch.ts
 正確な市町村の追加はGeocoding APIの追加も検討（JSONだと重くなるため）
 
 ## DB構成(SQLite)
-カラム	型	説明
-city	TEXT	都市名（主キー）
-prefecture	TEXT	都道府県名
-temp	REAL	現在気温
-tempMax / tempMin	REAL	最高・最低気温
-rain	REAL	簡易降水確率
-icon	TEXT	天気アイコン
-humidity	REAL	湿度
-windSpeed	REAL	風速
-updatedAt	TEXT	更新日時
-		
-カラム	型	説明
-id	INTEGER	主キー
-city	TEXT	都市名
-temp	REAL	検索時の気温
-icon	TEXT	天気アイコン
-updatedAt	TEXT	検索時刻
+### weather_latest
+|カラム|	型 |	説明|
+|city	|TEXT	|都市名（主キー）|
+|prefecture|	TEXT	|都道府県名|
+|temp	|REAL	|現在気温|
+|tempMax / tempMin	|REAL|	最高・最低気温|
+|rain|	REAL	|簡易降水確率|
+|icon|	TEXT|	天気アイコン|
+|humidity|	REAL|	湿度|
+|windSpeed|	REAL|	風速|
+|updatedAt|	TEXT|	更新日時|
+### weather_history
+|カラム|	型	|説明|
+|id	|INTEGER|	主キー|
+|city|	TEXT|	都市名|
+|temp|	REAL|	検索時の気温|
+|icon|	TEXT|	天気アイコン|
+|updatedAt|	TEXT|	検索時刻|
 
 ## セットアップ方法
 ```bash
