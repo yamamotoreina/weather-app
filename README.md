@@ -61,12 +61,6 @@ weatherRepository.ts
 useweatherSearch.ts
 カスタムフックでロジックとUIを分離
 
-## セットアップ方法
-```bash
-git clone ...
-npm install
-npm start
-
 ## 追加予定の機能
 ファイルを都道府県ごとに分割して軽量化
 座標を公式データへの差し替えは必要に応じて追加する
@@ -91,3 +85,8 @@ temp	REAL	検索時の気温
 icon	TEXT	天気アイコン
 updatedAt	TEXT	検索時刻
 
+## セットアップ方法
+```bash
+git clone ...
+npm install
+npm start
