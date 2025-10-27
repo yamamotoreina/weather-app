@@ -1,8 +1,11 @@
 import { weatherApi } from "../api/weatherApi"
 import { locationService } from "./locationService"
 import type { CurrentWeather, ForecastDay } from "../types/weather"
-import { NotFoundError } from "../types/error"
-import { saveToHistory, saveLatestWeather, getLatest } from "../db/weatherRepository"
+import {
+  saveToHistory,
+  saveLatestWeather,
+  getLatest
+} from "../db/weatherRepository"
 
 //locationService + weatherApi を組み合わせ、アプリ用の整形データを返す
 
@@ -13,7 +16,7 @@ export const weatherService = {
   async fetchCurrent(cityName: string): Promise<CurrentWeather | null> {
     try {
       const loc = locationService.findLocationOrThrow(cityName) //JSONから緯度経度を探す
-       const latest = await getLatest(loc.city)
+      const latest = await getLatest(loc.city)
 
       // --- キャッシュチェック ---
       if (latest && !shouldUpdate(latest.updatedAt)) {
@@ -28,12 +31,24 @@ export const weatherService = {
       const rainChance =
         rainVolume === 0
           ? 0
+          : rainVolume < 0.1
+          ? 10
+          : rainVolume < 0.3
+          ? 20
           : rainVolume < 0.5
           ? 30
-          : rainVolume < 1.0
-          ? 60
+          : rainVolume < 0.8
+          ? 40
+          : rainVolume < 1.2
+          ? 50
           : rainVolume < 2.0
+          ? 60
+          : rainVolume < 3.0
+          ? 70
+          : rainVolume < 5.0
           ? 80
+          : rainVolume < 7.0
+          ? 90
           : 100
 
       //整形して返す
@@ -56,13 +71,13 @@ export const weatherService = {
         lon: loc.lon,
         updatedAt: new Date().toISOString()
       }
-       // --- DB保存 ---
+      // --- DB保存 ---
       await saveLatestWeather(current)
       await saveToHistory(current)
 
       console.log("🌤️ APIから取得:", loc.city)
       return current
-     } catch (error) {
+    } catch (error) {
       console.error("fetchCurrent失敗:", error)
 
       // --- オフラインフォールバック ---
@@ -73,7 +88,6 @@ export const weatherService = {
       }
       // 全パスで return を保証する
       return null
-
     }
   },
 
