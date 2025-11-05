@@ -1,5 +1,4 @@
-import { ActivityIndicator, ScrollView, View } from "react-native"
-import { JSX } from "react"
+import { ActivityIndicator, ScrollView, View, Text } from "react-native"
 import Header from "../components/Header"
 import ForecastList from "../components/ForecastList"
 import { useWeatherSearch } from "../hooks/useWeatherSearch"
@@ -9,6 +8,7 @@ import WeatherCard from "../components/WeatherCard"
 
 export const HomeScreen = () => {
   const { current, forecast, loading, searchWeather } = useWeatherSearch()
+  console.log("✅ HomeScreen forecast:", forecast)
 
   return (
     <ScrollView
@@ -23,7 +23,7 @@ export const HomeScreen = () => {
       {loading && <ActivityIndicator size="large" color="#0000ff" />}
       {current && (
         <InfoRow
-          date={current.date}
+           date={current.date ?? new Date().toLocaleString()}
           temp={`${current.temp}℃`}
           humidity={`${current.humidity}%`}
         />
@@ -37,7 +37,8 @@ export const HomeScreen = () => {
         rain={`${current?.rain ?? 0}%`}
         icon={`${current?.icon ?? "☀️"}`}
       />
-      <ForecastList forecast={forecast} />
+    <ForecastList forecast={forecast} />
+
     </ScrollView>
   )
 }

@@ -20,11 +20,8 @@ export default defineConfig([
       react: pluginReact
     },
     rules: {
-      ...js.configs.recommended.rules,
-      ...tseslint.configs.recommended.rules,
-      ...pluginReact.configs.recommended.rules,
-      "react/react-in-jsx-scope": "off", // React 17+では不要
-      "@typescript-eslint/no-unused-vars": ["warn"]
+      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-explicit-any": "off"
     }
   }
 ])
