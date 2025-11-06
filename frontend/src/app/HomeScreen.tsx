@@ -23,7 +23,7 @@ export const HomeScreen = () => {
       {loading && <ActivityIndicator size="large" color="#0000ff" />}
       {current && (
         <InfoRow
-           date={current.date ?? new Date().toLocaleString()}
+          date={current.date}
           temp={`${current.temp}℃`}
           humidity={`${current.humidity}%`}
         />
@@ -31,14 +31,19 @@ export const HomeScreen = () => {
 
       {/* 現在の天気 */}
       <WeatherCard
-        location={current ? `${current.city} の天気` : "天気を検索"}
+        location={
+          current
+            ? `${current.prefecture ?? ""}${
+                current.city ? " " + current.city : ""
+              } の天気`
+            : "天気を検索"
+        }
         maxTemp={`${current?.tempMax ?? "--"}°C`}
         minTemp={`${current?.tempMin ?? "--"}°C`}
         rain={`${current?.rain ?? 0}%`}
         icon={`${current?.icon ?? "☀️"}`}
       />
-    <ForecastList forecast={forecast} />
-
+      <ForecastList forecast={forecast} />
     </ScrollView>
   )
 }

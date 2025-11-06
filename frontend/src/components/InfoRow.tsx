@@ -1,5 +1,13 @@
 import { View, Text, StyleSheet } from "react-native"
 
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  const month = date.getMonth() + 1; // 0始まりなので +1
+  const day = date.getDate();
+  return `${month}/${day}`;
+}
+
+
 type Props = {
   date: string
   temp: string
@@ -7,6 +15,7 @@ type Props = {
 }
 
 export const InfoRow = ({ date, temp, humidity }: Props) =>{
+  const displayDate = formatDate(date)
   return (
     <View style={styles.row}>
       <Text style={styles.text}>{date}</Text>

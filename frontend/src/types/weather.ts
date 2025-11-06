@@ -8,16 +8,17 @@ export type CurrentWeather = {
   humidity: number
   description: string
   icon: string
-  windSpeed: number,
+  windSpeed: number
   rain?: number
   date?: string
+  prefecture:string
 }
 
 export type ForecastDay = {
   date: string
+  description: string
+  icon: string | null
+  rain: number
   tempMax: number
   tempMin: number
-  description: string
-  icon: string
-  rain: number
 }

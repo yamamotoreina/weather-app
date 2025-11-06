@@ -17,6 +17,7 @@ export function useWeatherSearch() {
 
       const forecastData = await weatherService.fetchForecast(cityName)
       setForecast(forecastData)
+      console.log("天気取得", forecast)
     } catch (err) {
       console.error("天気情報取得エラー:", err)
     } finally {

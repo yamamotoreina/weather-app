@@ -5,27 +5,37 @@ type Props = {
   forecast: ForecastDay[]
 }
 
-export default function ForecastList({ forecast }: Props) {
-  if (!forecast || forecast.length === 0) return null
-  console.log("ForecastListレンダリング:", forecast?.length)
-
-
+export default function ForecastList ({ forecast }: Props) {
+  const displayForecast =
+    forecast && forecast.length > 0
+      ? forecast.slice(0, 5)
+      : [
+          {
+            date: new Date().toISOString(),
+            description: "データなし",
+            icon: null,
+            rain: 0,
+            tempMax: 0,
+            tempMin: 0,
+          },
+        ];
   return (
     <View style={styles.container}>
-      {forecast.map((item) => {
+      {displayForecast.map((item, index) => {
         const iconUrl = item.icon
           ? `https://openweathermap.org/img/wn/${item.icon}@2x.png`
           : null
 
-        const date = new Date(item.date)
-        const dayOfWeek = ["日", "月", "火", "水", "木", "金", "土"][
-          date.getDay()
-        ]
-        const displayDate = `${date.getMonth() + 1}/${date.getDate()}(${dayOfWeek})`
+        const dateObj = new Date(item.date);
+
+        const weekdays = ["日", "月", "火", "水", "木", "金", "土"]
+        const weekday = weekdays[dateObj.getDay()];
+
+        const displayDate = `${dateObj.getMonth() + 1}/${dateObj.getDate()}（${weekday}）`
 
         return (
-          <View key={item.date} style={styles.row}>
-            <Text style={styles.date}>{displayDate}</Text>
+          <View key={item?.date ?? `empty-${index}`} style={styles.row}>
+            <Text style={styles.date}>{displayDate ?? "--"}</Text>
             {iconUrl ? (
               <Image
                 source={{ uri: iconUrl }}
@@ -35,8 +45,8 @@ export default function ForecastList({ forecast }: Props) {
             ) : (
               <Text style={styles.fallbackIcon}>☀️</Text>
             )}
-            <Text style={styles.maxTemp}>{Math.round(item.tempMax)}°C</Text>
-            <Text style={styles.minTemp}>{Math.round(item.tempMin)}°C</Text>
+            <Text style={styles.maxTemp}>{Math.round(item.tempMax ?? 0)}°C</Text>
+            <Text style={styles.minTemp}>{Math.round(item.tempMin ?? 0)}°C</Text>
             <Text style={styles.rain}>{item.rain ?? 0}%</Text>
           </View>
         )
