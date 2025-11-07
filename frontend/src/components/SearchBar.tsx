@@ -3,9 +3,10 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  View
+  View,
+  useWindowDimensions
 } from "react-native"
-import React, { useEffect, useState } from "react"
+import { useState } from "react"
 import { Ionicons } from "@expo/vector-icons"
 
 interface SearchBarProps {
@@ -26,6 +27,10 @@ export default function SearchBar({ onSearch, loading }: SearchBarProps) {
       console.error("検索エラー:", error)
     }
   }
+
+  const { width } = useWindowDimensions()
+  const isMobile = width <= 800
+  const styles = createStyles(isMobile)
 
   return (
     <View style={styles.container}>
@@ -50,24 +55,25 @@ export default function SearchBar({ onSearch, loading }: SearchBarProps) {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderBottomWidth: 1,
-    borderColor: "#000",
-    marginVertical: 32,
-    borderRadius: 20,
-    width: "80%",
-    backgroundColor: "#fff"
-  },
-  input: {
-    flex: 1,
-    fontSize: 20,
-    paddingLeft: 16,
-    borderBottomEndRadius: "1px"
-  },
-  icon: {
-    paddingRight: 16
-  }
-})
+const createStyles = (isMobile) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: "row",
+      alignItems: "center",
+      borderBottomWidth: 1,
+      borderColor: "#000",
+      marginVertical: 32,
+      borderRadius: 20,
+      width: isMobile ? "80%" : 480 ,
+      backgroundColor: "#fff"
+    },
+    input: {
+      flex: 1,
+      fontSize: 20,
+      paddingLeft: 16,
+      borderBottomEndRadius: "1px"
+    },
+    icon: {
+      paddingRight: 16
+    }
+  })

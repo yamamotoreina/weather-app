@@ -5,6 +5,8 @@ from django.db.models import Q
 import requests
 from django.conf import settings
 from collections import defaultdict
+from datetime import date
+
 
 BASE_URL = "https://api.openweathermap.org/data/2.5"
 
@@ -130,3 +132,71 @@ def get_forecast(request):
         return JsonResponse(forecast_list[:5], safe=False)
     except requests.exceptions.RequestException as e:
         return JsonResponse({"error": str(e)}, status=500)
+
+# ------------------------
+# 3時間予報（時間単位）
+# ------------------------
+def forecast_3h(request):
+
+    query = request.GET.get("q")
+    city_obj = find_city_by_query(query)
+
+    if not city_obj:
+        return JsonResponse({"error": f"'{query}' に該当する地点が見つかりません"}, status=404)
+
+    params = {
+        "lat": city_obj.latitude,
+        "lon": city_obj.longitude,
+        "appid": settings.OPENWEATHER_API_KEY,
+        "units": "metric",
+        "lang": "ja",
+    }
+
+    try:
+        response = requests.get(BASE_URL + "/forecast", params=params)
+        response.raise_for_status()
+        data = response.json()
+        today_str = date.today().strftime("%Y-%m-%d") #時間のみ
+
+        forecast_today_list = [
+            item for item in data.get("list",[])
+            if item["dt_txt"].startswith(today_str)
+        ]
+
+        slots = ["00", "03", "06", "09", "12", "15", "18", "21"]
+        forecast_3h_list = []
+
+        for slot in slots:
+            # その時間に一致するデータを検索
+            slot_item = next(
+                (item for item in forecast_today_list if item["dt_txt"].split(" ")[1].startswith(slot)),
+                None
+            )
+            if slot_item:
+                forecast_3h_list.append({
+                    "time": slot,  # HH
+                    "temp_max": slot_item["main"]["temp_max"],
+                    "temp_min": slot_item["main"]["temp_min"],
+                    "icon": slot_item["weather"][0]["icon"],
+                    "pop": int(slot_item.get("pop", 0) * 100),  # 0~100%
+                })
+            else:
+                # データが無い場合は None または0で埋める
+                forecast_3h_list.append({
+                    "time": slot,
+                    "temp_max": None,
+                    "temp_min": None,
+                    "icon": None,
+                    "pop": 0,
+                })
+
+
+        return JsonResponse({
+            "city": data["city"]["name"], 
+            "country":data ["city"]["country"],
+            "forecast_3h": forecast_3h_list
+        })
+
+    except requests.RequestException as e:
+        return JsonResponse({"error": str(e)}, status=500)
+

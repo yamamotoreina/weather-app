@@ -11,7 +11,7 @@ export type CurrentWeather = {
   windSpeed: number
   rain?: number
   date?: string
-  prefecture:string
+  prefecture: string
 }
 
 export type ForecastDay = {
@@ -21,4 +21,12 @@ export type ForecastDay = {
   rain: number
   tempMax: number
   tempMin: number
+}
+
+export type Forecast3h = {
+  time: string
+  tempMax: number 
+  tempMin: number 
+  icon: string | null
+  pop: number
 }

@@ -15,4 +15,10 @@ export const weatherApi = {
     if (!res.ok) throw new Error("天気予報の取得に失敗しました");
     return await res.json();
   },
+  async fetchForecast3h(cityName: string) {
+    const url = `${BASE_URL}/forecast_3h/?q=${encodeURIComponent(cityName)}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("天気予報の取得に失敗しました");
+    return await res.json();
+  },
 };

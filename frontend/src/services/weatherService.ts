@@ -1,4 +1,4 @@
-import type { CurrentWeather, ForecastDay } from "../types/weather"
+import type { CurrentWeather, Forecast3h, ForecastDay } from "../types/weather"
 
 const BASE_URL = "http://127.0.0.1:8000/api/weather"
 
@@ -47,5 +47,28 @@ export const weatherService = {
       console.error("fetchForecast失敗:", error)
       return []
     }
-  }
+  },
+
+  async fetchForecast3h(cityName: string): Promise<Forecast3h []> {
+    try {
+      const url = `${BASE_URL}/forecast_3h/?q=${encodeURIComponent(cityName)}`
+      const res = await fetch(url)
+      if (!res.ok) throw new Error("3時間ごとの天気取得失敗")
+
+      const data = await res.json()
+      console.log("3時間ごとの天気:", data)
+       // バックエンドのレスポンス形式に合わせて整形
+      const list = Array.isArray(data.forecast_3h) ? data.forecast_3h : []
+      return list.map((item: any) => ({
+        time: item.time,                      // "00", "03",
+        tempMax: item.temp_max ?? 0,
+        tempMin: item.temp_min ?? 0,
+        icon: item.icon ?? null,
+        pop: item.pop ?? 0,
+      }))
+    } catch (error) {
+      console.error("fetchForecast3h失敗:", error)
+      return null
+    }
+  },
 }

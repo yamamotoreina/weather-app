@@ -1,4 +1,5 @@
-import { View, StyleSheet, Text, Image } from "react-native"
+import { View, StyleSheet, Text, Image, useWindowDimensions } from "react-native"
+
 
 type Props = {
   location: string
@@ -20,6 +21,11 @@ export default function WeatherCard({
     : null
   console.log("icon", icon)
   console.log("iconUrl:", iconUrl)
+
+  const {width} = useWindowDimensions()
+  const isMobile = width <= 800
+  const styles = createStyles(isMobile)
+
   return (
     <View style={styles.container}>
       <View style={styles.item}>
@@ -52,13 +58,13 @@ export default function WeatherCard({
   )
 }
 
-const styles = StyleSheet.create({
+const createStyles = (isMobile) => StyleSheet.create({
   container: {
     alignSelf: "center", //親の中央
     paddingVertical: 24,
     backgroundColor: "#fff",
     margin: 16,
-    width: "80%",
+    width: isMobile ? "80%" : 480 ,
     alignItems: "center",
     borderRadius: 20
   },
@@ -105,4 +111,5 @@ const styles = StyleSheet.create({
   value: {
     fontSize: 20
   }
+  
 })
