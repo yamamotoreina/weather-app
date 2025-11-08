@@ -1,3 +1,4 @@
+//API通信や保存ロジック
 import type { CurrentWeather, Forecast3h, ForecastDay } from "../types/weather"
 
 const BASE_URL = "http://127.0.0.1:8000/api/weather"
@@ -69,6 +70,33 @@ export const weatherService = {
     } catch (error) {
       console.error("fetchForecast3h失敗:", error)
       return null
+    }
+  },
+  
+  //前回の都市を取得
+  async getLastCity(): Promise<string | null> {
+    try {
+      const res = await fetch(`${BASE_URL}/last_city/`)
+      if (!res.ok) throw new Error("前回都市の取得失敗")
+      const data = await res.json()
+      return data.city || null
+    } catch (err) {
+      console.error("getLastCity失敗:", err)
+      return null
+    }
+  },
+
+  //前回の都市を保存
+  async saveLastCity(cityName: string): Promise<void> {
+    try {
+      await fetch(`${BASE_URL}/save_last_city/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ city: cityName }),
+      })
+      console.log("サーバーに保存完了:", cityName)
+    } catch (err) {
+      console.error("saveLastCity失敗:", err)
     }
   },
 }

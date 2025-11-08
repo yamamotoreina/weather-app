@@ -42,3 +42,7 @@ class City(models.Model):
         # 例: 福岡県福岡市中央区
         parts = [self.prefecture, self.city, self.name]
         return "".join([p for p in parts if p])
+
+#都市名を1件のみ保存する
+class LastCity(models.Model):
+    name = models.CharField(max_length=100)

@@ -6,10 +6,27 @@ import { InfoRow } from "../components/InfoRow"
 import SearchBar from "../components/SearchBar"
 import WeatherCard from "../components/WeatherCard"
 import Forecast3hList from "../components/Forecast3hList"
+import { useEffect } from "react"
 
 export const HomeScreen = () => {
   const { current, forecast, loading, forecast3h, searchWeather } = useWeatherSearch()
-  
+  //ページ初期化時に前回の都市を取得して検索する
+  useEffect(() => {
+    const fetchLastCity = async () => {
+      try {
+        const res = await fetch("http://127.0.0.1:8000/api/last_city/")
+        const data = await res.json()
+        if (data.city) {
+          console.log("前回の都市:", data.city)
+          searchWeather(data.city)
+        }
+      } catch (error) {
+        console.error("前回の都市取得エラー:", error)
+      }
+    }
+    fetchLastCity()
+  }, [])
+
   return (
     <ScrollView
       contentContainerStyle={{
