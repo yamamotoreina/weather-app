@@ -1,38 +1,36 @@
-version: '3.9'
 
 services:
-  db:
-    image: mysql:8.0
-    container_name: mysql-db
-    restart: always
+  postgres-db:
+    image: postgres:15
+    container_name: postgres-db
     environment:
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: weather_app
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
-    ports:
-      - "3306:3306"
+      POSTGRES_DB: weatherdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     volumes:
-      - ./backend/db_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
   backend:
     build: ./backend
     container_name: django-backend
     command: >
       sh -c "python manage.py migrate &&
+             python manage.py import_all_cities --path=weatherapp/data &&
              python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./backend:/app
     ports:
       - "8000:8000"
     environment:
-      DATABASE_NAME: weather_app
-      DATABASE_USER: user
-      DATABASE_PASSWORD: password
-      DATABASE_HOST: db
-      DATABASE_PORT: 3306
+      DATABASE_NAME: weatherdb
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      DATABASE_HOST: postgres-db   # ← PostgreSQLのサービス名と一致させる
+      DATABASE_PORT: 5432
     depends_on:
-      - db
+      - postgres-db
 
   frontend:
     build: ./frontend
@@ -43,3 +41,6 @@ services:
       REACT_APP_API_URL: http://localhost:8000
     depends_on:
       - backend
+
+volumes:
+  postgres_data:
