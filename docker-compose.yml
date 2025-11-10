@@ -1,22 +1,42 @@
+<<<<<<< HEAD
 version: '3.9'
+=======
+>>>>>>> 9f81be7 (DockerCompose対応に変更した)
 
 services:
-  db:
+  # --- MySQL ---
+  mysql-db:
     image: mysql:8.0
     container_name: mysql-db
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
       MYSQL_DATABASE: weather_app
+<<<<<<< HEAD
       MYSQL_USER: user
       MYSQL_PASSWORD: password
     ports:
       - "3306:3306"
     volumes:
       - ./backend/db_data:/var/lib/mysql
+=======
+      MYSQL_USER: weather_user
+      MYSQL_PASSWORD: weatherpass
+    ports:
+      - "3306:3306"
+    volumes:
+      # MySQLのデータ永続化
+      - db_data:/var/lib/mysql
+      # 初期データを自動インポート
+      - ./weather_app_dump.sql:/docker-entrypoint-initdb.d/weather_app_dump.sql
+    networks:
+      - app-network
+>>>>>>> 9f81be7 (DockerCompose対応に変更した)
 
+  # --- Django Backend ---
   backend:
     build: ./backend
+<<<<<<< HEAD
     container_name: django-backend
     command: >
       sh -c "python manage.py migrate &&
@@ -33,9 +53,32 @@ services:
       DATABASE_PORT: 3306
     depends_on:
       - db
+=======
+    container_name: django_app
+    env_file:
+      - ./backend/.env
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      - mysql-db
+    environment:
+      DATABASE_HOST: mysql-db
+      DATABASE_NAME: weather_app
+      DATABASE_USER: weather_user
+      DATABASE_PASSWORD: weatherpass
+      DJANGO_SETTINGS_MODULE: settings
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    networks:
+      - app-network
+>>>>>>> 9f81be7 (DockerCompose対応に変更した)
 
+  # --- React (Expo Web) Frontend ---
   frontend:
     build: ./frontend
+<<<<<<< HEAD
     container_name: react-frontend
     ports:
       - "3000:3000"
@@ -43,3 +86,24 @@ services:
       REACT_APP_API_URL: http://localhost:8000
     depends_on:
       - backend
+=======
+    container_name: react_app
+    depends_on:
+      - backend
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    stdin_open: true
+    tty: true
+    networks:
+      - app-network
+
+networks:
+  app-network:
+
+volumes:
+  db_data:
+>>>>>>> 9f81be7 (DockerCompose対応に変更した)

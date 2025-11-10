@@ -1,9 +1,8 @@
 ##backend/settings.py
-##Django の設定ファイル（ React連携対応 + PlanetScale接続 ）
+##Django の設定ファイル（ React連携対応 ）
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-import dj_database_url
 from decouple import config
 
 #.envの読み込み
@@ -12,7 +11,7 @@ load_dotenv()
 # === 基本設定 ===
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'unsafe-default-key')
-DEBUG = os.getenv('DEBUG', 'True') == True
+DEBUG = os.getenv('DEBUG', 'True').lower() in ['true', '1', 'yes']
 
 # Renderでも動くようにワイルドカード許可
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
@@ -62,26 +61,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'wsgi.application'
 
-# === データベース(PlanetScale対応) ===
+# === データベース ===
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-if DATABASE_URL:
-    DATABASES = {
-        'default': dj_database_url.parent(DATABASE_URL,conn_max_age=600),
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': config('DB_NAME', 'weather_app'),
+        'USER': config('DB_USER', 'weather_user'),
+        'PASSWORD': config('DB_PASSWORD', ''),
+        'HOST': config('DB_HOST', 'mysql-db'),
+        'PORT': config('DB_PORT', '3306'),
+        'OPTIONS': {'charset': 'utf8mb4','init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': config('DB_NAME', 'weather_app'),
-            'USER': config('DB_USER', 'weather_user'),
-            'PASSWORD': config('DB_PASSWORD', ''),
-            'HOST': config('DB_HOST', 'localhost'),
-            'PORT': config('DB_PORT', '3306'),
-            'OPTIONS': {'charset': 'utf8mb4',},
-        }
-    }
+}
 
 # === パスワード検証 ===
 AUTH_PASSWORD_VALIDATORS = [
@@ -103,14 +98,11 @@ STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # === CORS設定 ===
-CORS_ALLOW_ALL_ORIGINS = True  # 開発時は全許可、本番では制限を推奨
+CORS_ALLOW_ALL_ORIGINS = DEBUG  # 開発時は全許可、本番では制限を推奨
 CORS_ALLOW_CREDENTIALS = [
-    "https://weather-app-0wud.onrender.com" , # RenderのフロントURL
+    "http://localhost:3000" , 
+    "http://127.0.0.1:3000",  # フロントURL
 ]
-
-#開発中のみ全許可
-if DEBUG:
-    CORS_ALLOW_ALL_ORIGINS = True
 
 # === OpenWeatherMap APIキー ===
 OPENWEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY')

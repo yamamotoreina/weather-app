@@ -15,4 +15,4 @@ COPY . .
 EXPOSE 3000
 
 # React開発サーバー起動
-CMD ["npm", "start"]
+CMD ["npm", "run", "web"]
