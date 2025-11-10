@@ -7,3 +7,4 @@ sqlparse==0.5.3
 dj-database-url==2.3.0
 python-decouple==3.8
 requests
+gunicorn>=20.1.0
