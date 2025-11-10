@@ -1,7 +1,7 @@
 //API通信や保存ロジック
 import type { CurrentWeather, Forecast3h, ForecastDay } from "../types/weather"
 
-const BASE_URL = "http://127.0.0.1:8000/api/weather"
+const BASE_URL = process.env.REACT_APP_API_URL + "/api/weather"
 
 export const weatherService = {
   // 現在の天気
@@ -50,7 +50,7 @@ export const weatherService = {
     }
   },
 
-  async fetchForecast3h(cityName: string): Promise<Forecast3h []> {
+  async fetchForecast3h(cityName: string): Promise<Forecast3h[]> {
     try {
       const url = `${BASE_URL}/forecast_3h/?q=${encodeURIComponent(cityName)}`
       const res = await fetch(url)
@@ -58,21 +58,21 @@ export const weatherService = {
 
       const data = await res.json()
       console.log("3時間ごとの天気:", data)
-       // バックエンドのレスポンス形式に合わせて整形
+      // バックエンドのレスポンス形式に合わせて整形
       const list = Array.isArray(data.forecast_3h) ? data.forecast_3h : []
       return list.map((item: any) => ({
-        time: item.time,                      // "00", "03",
+        time: item.time, // "00", "03",
         tempMax: item.temp_max ?? 0,
         tempMin: item.temp_min ?? 0,
         icon: item.icon ?? null,
-        pop: item.pop ?? 0,
+        pop: item.pop ?? 0
       }))
     } catch (error) {
       console.error("fetchForecast3h失敗:", error)
       return null
     }
   },
-  
+
   //前回の都市を取得
   async getLastCity(): Promise<string | null> {
     try {
@@ -92,11 +92,11 @@ export const weatherService = {
       await fetch(`${BASE_URL}/save_last_city/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ city: cityName }),
+        body: JSON.stringify({ city: cityName })
       })
       console.log("サーバーに保存完了:", cityName)
     } catch (err) {
       console.error("saveLastCity失敗:", err)
     }
-  },
+  }
 }
