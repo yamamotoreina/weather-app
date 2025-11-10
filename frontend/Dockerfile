@@ -5,7 +5,7 @@ FROM node:20
 WORKDIR /app
 
 # 依存関係を先にコピーしてインストール
-COPY package*.json ./
+COPY package.json package-lock.json ./
 RUN npm install
 
 # ソースをコピー
