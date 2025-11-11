@@ -5,7 +5,7 @@ OpenWeatherMap.Apiから天気情報を取得する天気予報アプリです�
 
 ## Docker方法
 ### 1. GitHub からクローン
-git clone <repo-url>
+git clone git@github.com:yamamotoreina/weather-app.git
 cd backend
 
 ### 2. backend/.env 作成
