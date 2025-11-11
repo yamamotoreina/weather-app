@@ -1,11 +1,12 @@
 //API通信や保存ロジック
 import type { CurrentWeather, Forecast3h, ForecastDay } from "../types/weather"
-const BASE_URL = process.env.REACT_APP_API_URL + "/api/weather";
+const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
+
 export const weatherService = {
   // 現在の天気
   async fetchCurrent(cityName: string): Promise<CurrentWeather | null> {
     try {
-      const url = `${BASE_URL}/current/?q=${encodeURIComponent(cityName)}`
+      const url = `${BASE_URL}/api/weather/current/?q=${encodeURIComponent(cityName)}`
       const res = await fetch(url)
       if (!res.ok) throw new Error("天気取得失敗")
 
@@ -21,7 +22,7 @@ export const weatherService = {
   // 5日間の天気予報
   async fetchForecast(cityName: string): Promise<ForecastDay[]> {
     try {
-      const url = `${BASE_URL}/forecast/?q=${encodeURIComponent(cityName)}`
+      const url = `${BASE_URL}/api/weather/forecast/?q=${encodeURIComponent(cityName)}`
       const res = await fetch(url)
       if (!res.ok) throw new Error("天気予報取得失敗")
 
@@ -50,7 +51,7 @@ export const weatherService = {
 
   async fetchForecast3h(cityName: string): Promise<Forecast3h []> {
     try {
-      const url = `${BASE_URL}/forecast_3h/?q=${encodeURIComponent(cityName)}`
+      const url = `${BASE_URL}/api/weather/forecast_3h/?q=${encodeURIComponent(cityName)}`
       const res = await fetch(url)
       if (!res.ok) throw new Error("3時間ごとの天気取得失敗")
 
@@ -74,7 +75,7 @@ export const weatherService = {
   //前回の都市を取得
   async getLastCity(): Promise<string | null> {
     try {
-      const res = await fetch(`${BASE_URL}/last_city/`)
+      const res = await fetch(`${BASE_URL}/api/weather/last_city/`)
       if (!res.ok) throw new Error("前回都市の取得失敗")
       const data = await res.json()
       return data.city || null
@@ -87,7 +88,7 @@ export const weatherService = {
   //前回の都市を保存
   async saveLastCity(cityName: string): Promise<void> {
     try {
-      await fetch(`${BASE_URL}/save_last_city/`, {
+      await fetch(`${BASE_URL}/api/weather/save_last_city/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ city: cityName }),
