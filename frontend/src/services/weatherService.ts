@@ -1,8 +1,6 @@
 //API通信や保存ロジック
 import type { CurrentWeather, Forecast3h, ForecastDay } from "../types/weather"
-
-const BASE_URL = "http://127.0.0.1:8000/api/weather"
-
+const BASE_URL = process.env.REACT_APP_API_URL + "/api/weather";
 export const weatherService = {
   // 現在の天気
   async fetchCurrent(cityName: string): Promise<CurrentWeather | null> {

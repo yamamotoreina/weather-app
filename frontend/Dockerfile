@@ -15,4 +15,5 @@ COPY . .
 EXPOSE 3000
 
 # React開発サーバー起動
-CMD ["npm", "run", "web"]
+CMD ["sh", "-c", "CI=1 npx expo start --web --host lan"]
+
