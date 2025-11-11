@@ -1,21 +1,50 @@
 # weather-app
 ## 概要
-フロントはReact/TypeScript、バックエンドはPython/Django、DBはPostgreSQLを使用したOpenWeatherMap.Apiから天気情報を取得する天気予報アプリです。
+フロントはReact/TypeScript、バックエンドはPython/Django、DBはMySQLを使用。
+OpenWeatherMap.Apiから天気情報を取得する天気予報アプリです。
 
-## インストール
-1.
+## Docker方法
+### 1. GitHub からクローン
+git clone <repo-url>
+cd backend
+
+### 2. backend/.env 作成
+cp backend/.env.example backend/.env
+
+### 3. Docker Compose 起動
+docker compose up --build
+
+### 4. コンテナ削除・データベース含め完全削除
+docker compose down
+docker compose down -v
+ 
 ## 主な機能
+
 ### 検索
 都道府県と主要都市をDBで緯度経度を予め格納、そこから緯度経度を使用してAPIで検索できる。
 前回の都市名(1件)をDBで保存しているためリロードされても検索は保持される。
+
 ### 天気
 現在の天気とその日の3時間ごとの天気を横スクロールで表示。週間予報として5日間の天気を取得している。
 取得情報はcurrentweather/forecastwastherに分けて管理することで、欲しい情報をインポートしやすくした。
+
 ## プロジェクト構成
 その他の地域も追加実装可能。
 DBで取得した情報を管理
 地域を検索すると天気情報が出る
 検索バー→JSONで経度緯度に変換→APIに渡してデータを取得
+
+## 通信の仕組み
+React と Django は Docker 内ネットワークで接続されています。
+| 通信方向        | 使用URL                            |
+| ----------- | -------------------------------- |
+| フロント → バック  | `http://backend:8000` （Docker 内） |
+| ブラウザ → フロント | `http://localhost:8081`          |
+
+## アクセス方法
+[フロントエンド] (http://localhost:8081/)
+[Django API] (http://localhost:8000/api/weather/)
+
 ## 使用技術
 React Native(Expo)
 Typescript
@@ -23,17 +52,16 @@ Python
 Django
 Docker
 OpenWeatherMap API
-PostgreSQL
+MySQL
 
 フロントエンドとバックエンドを分けて実装することで可読性・再利用性を高めた。
 
 ## 運用
-
-
-ブランチ運用
-main:完了済みコード
-develop: 環境構築・ビルド用ブランチ
-develop/ui-structure:開発用ブランチ
+## Docker構造
+mysql-db
+django-app
+react-app
+各コンテナは app-network で接続されます。
 
 ## DB構成(PostgreSQL)
 ### WeatherHistory（天気の履歴）
@@ -74,4 +102,6 @@ develop/ui-structure:開発用ブランチ
 | id       | AutoField      | 自動採番ID |
 | name     | CharField(100) | 都市名    |
 
-## セットアップ方法
+## 補足
+・ .env ファイルは GitHub には含めず、必要なキーを backend/.env.example で共有します。
+
