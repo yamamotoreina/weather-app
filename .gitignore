@@ -46,6 +46,7 @@ yarn-error.*
 backend/venv/
 backend/__pycache__/
 backend/weatherapp/data/
+*.env.example
 *.pyc
 *.pyo
 *.pyd
