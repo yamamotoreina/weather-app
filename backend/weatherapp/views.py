@@ -13,7 +13,7 @@ import json
 BASE_URL = "https://api.openweathermap.org/data/2.5"
 
 # ------------------------
-# 汎用検索ヘルパー
+# オートコンプリート用検索ヘルパー
 # ------------------------
 def find_city_by_query(query: str):
     """ユーザーの検索文字列から最も近いCityを推定する"""
@@ -202,7 +202,9 @@ def forecast_3h(request):
     except requests.RequestException as e:
         return JsonResponse({"error": str(e)}, status=500)
 
+# ------------------------
 #前回検索した都市名のみ保存する(保存用)
+# ------------------------
 @csrf_exempt
 def save_last_city(request):
     if request.method == "POST":
