@@ -48,7 +48,7 @@ export const weatherService = {
       return []
     }
   },
-
+  //3時間ごとの天気を取得
   async fetchForecast3h(cityName: string): Promise<Forecast3h []> {
     try {
       const url = `${BASE_URL}/api/weather/forecast_3h/?q=${encodeURIComponent(cityName)}`

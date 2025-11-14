@@ -1,49 +1,13 @@
-# weatherapp/views.py
 from django.http import JsonResponse
-from weatherapp.models import City
-from django.db.models import Q
-from .models import LastCity
 import requests
 from django.conf import settings
+from django.db.models import Q
 from collections import defaultdict
 from datetime import date
-from django.views.decorators.csrf import csrf_exempt
-import json
-
+# ほかのモジュールからインポート
+from weatherapp.models import City
+from weatherapp.views.search_views import find_city_by_query 
 BASE_URL = "https://api.openweathermap.org/data/2.5"
-
-# ------------------------
-# オートコンプリート用検索ヘルパー
-# ------------------------
-def find_city_by_query(query: str):
-    """ユーザーの検索文字列から最も近いCityを推定する"""
-    if not query:
-        return None
-
-    # 前後の空白を削除
-    query = query.strip()
-
-    # 県、市、区、町丁目 どのカラムに含まれてもOK（部分一致）
-    candidates = City.objects.filter(
-        Q(name__icontains=query)
-        | Q(prefecture__icontains=query)
-        | Q(city__icontains=query)
-        | Q(ward__icontains=query)
-        | Q(town__icontains=query)
-    )
-
-    # 完全一致優先 → 次に部分一致で1件を返す
-    exact = candidates.filter(
-        Q(name=query)
-        | Q(city=query)
-        | Q(ward=query)
-        | Q(town=query)
-    ).first()
-
-    if exact:
-        return exact
-    return candidates.first()
-
 
 # ------------------------
 # 現在の天気
@@ -201,27 +165,3 @@ def forecast_3h(request):
 
     except requests.RequestException as e:
         return JsonResponse({"error": str(e)}, status=500)
-
-# ------------------------
-#前回検索した都市名のみ保存する(保存用)
-# ------------------------
-@csrf_exempt
-def save_last_city(request):
-    if request.method == "POST":
-        data = json.loads(request.body)  # JSONを読み込む
-        city_name = data.get("city")
-
-        if not city_name:
-            return JsonResponse({"error": "city missing"}, status=400)
-
-        # 常に1件だけ保持
-        LastCity.objects.all().delete()
-        LastCity.objects.create(name=city_name)
-        return JsonResponse({"status": "ok"})
-
-# 取得用
-def get_last_city(request):
-    city = LastCity.objects.first()
-    if city:
-        return JsonResponse({"city": city.name})
-    return JsonResponse({"city": None})
