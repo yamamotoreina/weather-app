@@ -151,8 +151,6 @@ const createStyles = (isMobile) =>
     container: {
       flexDirection: "column",
       alignItems: "center",
-      borderBottomWidth: 1,
-      borderColor: "#000",
       marginVertical: 32,
       borderRadius: 20,
       backgroundColor: "#fff"
@@ -162,7 +160,8 @@ const createStyles = (isMobile) =>
       alignItems: "center",
       width: isMobile ? "100%" : 480,
       paddingHorizontal: 8,
-      backgroundColor: "#ccecff"
+      borderRadius: 20,
+      backgroundColor: "#fff"
     },
     input: {
       flex: 1,
@@ -173,7 +172,7 @@ const createStyles = (isMobile) =>
       paddingRight: 16
     },
     suggestions: {
-      backgroundColor: "#ccecff",
+      backgroundColor: "#fff",
       marginTop: 4,
       maxHeight: 200
     },
@@ -182,6 +181,6 @@ const createStyles = (isMobile) =>
       borderBottomColor: "#eee"
     },
     highlightedItem: {
-      backgroundColor: "#ccecff"
+      backgroundColor: "#fff"
     }
   })
