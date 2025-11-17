@@ -70,7 +70,7 @@ const createStyles = (isMobile) => StyleSheet.create({
   },
   item: {},
   location: {
-    fontSize: 30
+    fontSize : isMobile ? 25 : 30
   },
   temp: {
     flexDirection: "row",
