@@ -1,10 +1,10 @@
 # --- ベースイメージ ---
-FROM python:3.10
+FROM python:3.10-slim
 
 # 作業ディレクトリ
 WORKDIR /app
 
-# 依存ライブラリ（mysqlclient ビルド用のパッケージを追加）
+# mysqlclient ビルドに必要なものだけ
 RUN apt-get update && apt-get install -y \
     pkg-config \
     default-libmysqlclient-dev \

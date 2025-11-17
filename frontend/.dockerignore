@@ -1,0 +1,9 @@
+node_modules
+build
+dist
+.expo
+.expo-shared
+*.log
+.git
+.gitignore
+.DS_Store

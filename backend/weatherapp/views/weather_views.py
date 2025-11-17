@@ -46,6 +46,9 @@ def get_current_weather(request):
             "icon": data["weather"][0]["icon"],
             "windSpeed": data["wind"]["speed"],
         }
+        if current["icon"].endswith("n"):
+            current["icon"] = current["icon"].replace("n", "d")
+
         return JsonResponse(current)
     except requests.exceptions.RequestException as e:
         return JsonResponse({"error": str(e)}, status=500)
@@ -86,12 +89,19 @@ def get_forecast(request):
             icons = [e["weather"][0]["icon"] for e in entries]
             rain = [int(e.get("pop", 0) * 100) for e in entries]
 
+            # 最頻値を取得
+            icon = max(set(icons), key=icons.count)
+
+            # 夜アイコン → 昼アイコンに変換
+            if icon.endswith("n"):
+                icon = icon.replace("n", "d")
+
             forecast_list.append({
                 "date": date,
                 "tempMin": round(min(temps), 1),
                 "tempMax": round(max(temps), 1),
                 "description": max(set(descriptions), key=descriptions.count),
-                "icon": max(set(icons), key=icons.count),
+                "icon": icon,
                 "rain": max(rain),
             })
 
@@ -103,7 +113,6 @@ def get_forecast(request):
 # 3時間予報（時間単位）
 # ------------------------
 def forecast_3h(request):
-
     query = request.GET.get("q")
     city_obj = find_city_by_query(query)
 
@@ -122,39 +131,36 @@ def forecast_3h(request):
         response = requests.get(BASE_URL + "/forecast", params=params)
         response.raise_for_status()
         data = response.json()
-        today_str = date.today().strftime("%Y-%m-%d") #時間のみ
-
-        forecast_today_list = [
-            item for item in data.get("list",[])
+        
+        today_str = date.today().strftime("%Y-%m-%d")
+        # 今日のデータだけにフィルタ
+        forecast_list = [
+            item for item in data.get("list", [])
             if item["dt_txt"].startswith(today_str)
         ]
-
+        
         slots = ["00", "03", "06", "09", "12", "15", "18", "21"]
         forecast_3h_list = []
+        last_icon = None
 
-        for slot in slots:
-            # その時間に一致するデータを検索
-            slot_item = next(
-                (item for item in forecast_today_list if item["dt_txt"].split(" ")[1].startswith(slot)),
-                None
-            )
-            if slot_item:
-                forecast_3h_list.append({
-                    "time": slot,  # HH
-                    "temp_max": slot_item["main"]["temp_max"],
-                    "temp_min": slot_item["main"]["temp_min"],
-                    "icon": slot_item["weather"][0]["icon"],
-                    "pop": int(slot_item.get("pop", 0) * 100),  # 0~100%
-                })
-            else:
-                # データが無い場合は None または0で埋める
-                forecast_3h_list.append({
-                    "time": slot,
-                    "temp_max": None,
-                    "temp_min": None,
-                    "icon": None,
-                    "pop": 0,
-                })
+        for slot_item in forecast_list:
+            dt_txt = slot_item["dt_txt"]  # "2025-11-17 03:00:00"
+            time = dt_txt.split(" ")[1][:2]  # HH
+            if time not in slots:
+                continue  # スロットに含まれない時間は無視
+            icon = slot_item["weather"][0]["icon"]
+            
+            if icon.endswith("n"):
+                icon = icon.replace("n", "d")
+                last_icon = icon
+
+            forecast_3h_list.append({
+                "time": time,  # HH
+                "temp_max": slot_item["main"]["temp_max"] ,
+                "temp_min": slot_item["main"]["temp_min"] ,
+                "icon": icon,
+                "pop": int(slot_item.get("pop", 0) * 100) ,
+            })
 
 
         return JsonResponse({

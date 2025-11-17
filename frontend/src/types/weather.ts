@@ -17,7 +17,7 @@ export type CurrentWeather = {
 export type ForecastDay = {
   date: string
   description: string
-  icon: string | null
+  icon: string
   rain: number
   tempMax: number
   tempMin: number
@@ -27,6 +27,6 @@ export type Forecast3h = {
   time: string
   tempMax: number 
   tempMin: number 
-  icon: string | null
+  icon: string
   pop: number
 }
